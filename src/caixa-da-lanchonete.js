@@ -11,12 +11,23 @@ class ValidateOrder {
     });
     return this.productValidation;
   }
+
+  validatePayment(metodoDePagamento) {
+    const paymet = methodosPayment.find(
+      (methodos) => methodos === metodoDePagamento
+    );
+    if (paymet) return true;
+    return false;
+  }
 }
 
 class CaixaDaLanchonete {
   calcularValorDaCompra(metodoDePagamento, itens) {
     const validarPedido = new ValidateOrder();
     if (!validarPedido.validateIten(itens)) return "Item inválido!";
+    if (!validarPedido.validatePayment(metodoDePagamento))
+      return "Forma de pagamento inválida";
+
     return "Compra Válida";
   }
 }
