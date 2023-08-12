@@ -1,54 +1,12 @@
+import PaymentOrder from "./PaymentOrder.js";
 import ValidateOrder from "./ValidateOrder.js";
-import { menu } from "./data.js";
-
-class PaymentOrder {
-  price;
-  constructor() {
-    this.price = 0;
-  }
-
-  payment(itens, metodoDePagamento, valueCorrection) {
-    itens.forEach((element) => {
-      const item = element.split(",")[0];
-      const itemQuantity = element.split(",")[1];
-      menu.find((e) => {
-        if (e.cod === item) this.price += e.price * itemQuantity;
-      });
-    });
-    if (metodoDePagamento === "dinheiro")
-      this.price = this.price - this.price * valueCorrection;
-    if (metodoDePagamento === "credito")
-      this.price = this.price + this.price * valueCorrection;
-
-    return this.price.toFixed(2).replace(".", ",");
-  }
-  // paymentInKind(itens) {
-  //   itens.forEach((element) => {
-  //     const item = element.split(",")[0];
-  //     const itemQuantity = element.split(",")[1];
-  //     menu.find((e) => {
-  //       if (e.cod === item) this.price += e.price * itemQuantity;
-  //     });
-  //   });
-  //   return this.price.toFixed(2);
-  // }
-  // paymentInCreditCard(itens) {
-  //   itens.forEach((element) => {
-  //     const item = element.split(",")[0];
-  //     const itemQuantity = element.split(",")[1];
-  //     menu.find((e) => {
-  //       if (e.cod === item) this.price += e.price * itemQuantity;
-  //     });
-  //   });
-  //   return (this.price + this.price * 0.03).toFixed(2);
-  // }
-}
 
 class CaixaDaLanchonete {
   calcularValorDaCompra(metodoDePagamento, itens) {
     if (!itens.length) return "Não há itens no carrinho de compra!";
 
     const validateOrder = new ValidateOrder();
+    const paymentOrder = new PaymentOrder();
 
     const validateIten = validateOrder.validateIten(itens);
     if (validateIten != null) return validateIten;
@@ -63,8 +21,6 @@ class CaixaDaLanchonete {
     const validateItem = validateOrder.validateExtraItem(itens);
     if (validateItem != null) return validateItem;
 
-    const paymentOrder = new PaymentOrder();
-
     if (metodoDePagamento === "dinheiro")
       return `R$ ${paymentOrder.payment(itens, "dinheiro", 0.05)}`;
     if (metodoDePagamento === "debito")
@@ -76,6 +32,8 @@ class CaixaDaLanchonete {
 
 export { CaixaDaLanchonete };
 
-const caixa = new CaixaDaLanchonete();
-const teste = caixa.calcularValorDaCompra("debito", ["cafe,1"]);
-console.log(teste);
+const caixa = new CaixaDaLanchonete().calcularValorDaCompra("dinheiro", [
+  "chantily,1",
+  "cafe,1",
+]);
+console.log(caixa);

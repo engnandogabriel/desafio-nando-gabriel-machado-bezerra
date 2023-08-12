@@ -4,13 +4,13 @@ class ValidateOrder {
   productValidation;
   validatePayment;
   quantityValidation;
-  validateItemExtra;
+  hasDependency;
 
   constructor() {
     this.productValidation = null;
     this.quantityValidation = null;
-    this.validateItemExtra = null;
     this.validatePayment = null;
+    this.hasDependency = false;
   }
 
   validateIten(itens) {
@@ -37,32 +37,27 @@ class ValidateOrder {
       if (qtdProduct < 0)
         this.quantityValidation = "Não há itens no carrinho de compra!";
     });
-
     return this.quantityValidation;
   }
 
   validateExtraItem(itens) {
-    var extra = itens.find(
-      (e) => e.split(",")[0] === "chantily" || e.split(",")[0] === "queijo"
-    );
-    if (extra === undefined) return this.validateItemExtra;
-    extra = extra.split(",")[0];
-
-    if (extra === "chantily") {
-      const principal = itens.find((e) => e.split(",")[0].includes("cafe"));
-      if (!principal)
-        this.validateItemExtra =
-          "Item extra não pode ser pedido sem o principal";
+    const itemDependencies = {
+      chantily: "cafe",
+      queijo: "sanduiche",
+    };
+    const items = itens.map((item) => item.split(",")[0]);
+    for (const item in itemDependencies) {
+      if (items.includes(item)) {
+        const dependency = itemDependencies[item];
+        if (!items.includes(dependency)) {
+          this.hasDependency = true;
+          break;
+        }
+      }
     }
-    if (extra === "queijo") {
-      const principal = itens.find((e) =>
-        e.split(",")[0].includes("sanduiche")
-      );
-      if (!principal)
-        this.validateItemExtra =
-          "Item extra não pode ser pedido sem o principal";
-    }
-    return this.validateItemExtra;
+    if (this.hasDependency)
+      return "Item extra não pode ser pedido sem o principal";
+    return null;
   }
 }
 export default ValidateOrder;
