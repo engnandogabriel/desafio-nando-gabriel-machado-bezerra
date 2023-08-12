@@ -10,8 +10,8 @@
 // ];
 
 export const menu = [
-  { cod: "cafe", describ: "Café", price: 2.85 },
-  { cod: "chantily", describ: "	Chantily (extra do Café)", price: 2.85 },
+  { cod: "cafe", describ: "Café", price: 3.0 },
+  { cod: "chantily", describ: "	Chantily (extra do Café)", price: 1.5 },
   { cod: "suco", describ: "Suco Natural", price: 6.2 },
   { cod: "sanduiche", describ: "Sanduíche", price: 6.5 },
   { cod: "queijo", describ: "Queijo (extra do Sanduíche)", price: 2 },

@@ -7,7 +7,7 @@ class PaymentOrder {
     this.price = 0;
   }
 
-  moneyPayment(itens) {
+  payment(itens, metodoDePagamento, valueCorrection) {
     itens.forEach((element) => {
       const item = element.split(",")[0];
       const itemQuantity = element.split(",")[1];
@@ -15,28 +15,33 @@ class PaymentOrder {
         if (e.cod === item) this.price += e.price * itemQuantity;
       });
     });
-    return (this.price - this.price * 0.05).toFixed(2);
+    if (metodoDePagamento === "dinheiro")
+      this.price = this.price - this.price * valueCorrection;
+    if (metodoDePagamento === "credito")
+      this.price = this.price + this.price * valueCorrection;
+
+    return this.price.toFixed(2).replace(".", ",");
   }
-  paymentInKind(itens) {
-    itens.forEach((element) => {
-      const item = element.split(",")[0];
-      const itemQuantity = element.split(",")[1];
-      menu.find((e) => {
-        if (e.cod === item) this.price += e.price * itemQuantity;
-      });
-    });
-    return this.price.toFixed(2);
-  }
-  paymentInCreditCard(itens) {
-    itens.forEach((element) => {
-      const item = element.split(",")[0];
-      const itemQuantity = element.split(",")[1];
-      menu.find((e) => {
-        if (e.cod === item) this.price += e.price * itemQuantity;
-      });
-    });
-    return (this.price + this.price * 0.03).toFixed(2);
-  }
+  // paymentInKind(itens) {
+  //   itens.forEach((element) => {
+  //     const item = element.split(",")[0];
+  //     const itemQuantity = element.split(",")[1];
+  //     menu.find((e) => {
+  //       if (e.cod === item) this.price += e.price * itemQuantity;
+  //     });
+  //   });
+  //   return this.price.toFixed(2);
+  // }
+  // paymentInCreditCard(itens) {
+  //   itens.forEach((element) => {
+  //     const item = element.split(",")[0];
+  //     const itemQuantity = element.split(",")[1];
+  //     menu.find((e) => {
+  //       if (e.cod === item) this.price += e.price * itemQuantity;
+  //     });
+  //   });
+  //   return (this.price + this.price * 0.03).toFixed(2);
+  // }
 }
 
 class CaixaDaLanchonete {
@@ -59,19 +64,18 @@ class CaixaDaLanchonete {
     if (validateItem != null) return validateItem;
 
     const paymentOrder = new PaymentOrder();
-    if (metodoDePagamento === "dinheiro")
-      return `R$ ${paymentOrder.moneyPayment(itens)}`;
-    if (metodoDePagamento === "debito")
-      return `R$ ${paymentOrder.paymentInKind(itens)}`;
-    if (metodoDePagamento === "credito")
-      return `R$ ${paymentOrder.paymentInCreditCard(itens)}`;
 
-    return "R$ 2,85";
+    if (metodoDePagamento === "dinheiro")
+      return `R$ ${paymentOrder.payment(itens, "dinheiro", 0.05)}`;
+    if (metodoDePagamento === "debito")
+      return `R$ ${paymentOrder.payment(itens)}`;
+    if (metodoDePagamento === "credito")
+      return `R$ ${paymentOrder.payment(itens, "credito", 0.03)}`;
   }
 }
 
 export { CaixaDaLanchonete };
 
 const caixa = new CaixaDaLanchonete();
-const teste = caixa.calcularValorDaCompra("credito", ["cafe,1"]);
+const teste = caixa.calcularValorDaCompra("debito", ["cafe,1"]);
 console.log(teste);
